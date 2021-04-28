@@ -1,21 +1,43 @@
 
-
+//URL for GeoJSON data
 var data_url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 
 // Perform a GET request to the query URL
 d3.json(data_url).then(function(data) {
-    // Once we get a response, send the data.features object to the createFeatures function
     createFeatures(data.features);
   });
 
-function createFeatures(earthquakeData) {
+//Set Circle Colors
+  function chooseColor(depth) {
+    if (depth<10) {
+        return "chartreuse"
+    }else if(10<=depth<30){
+        return "greenyellow"
+    }else if(30<=depth<50){
+        return "gold"
+    }else if(50<=depth<70){
+        return "goldenrod"
+    }else if(70<=depth<900){
+        return "orange"
+    }else if(depth>=90){
+        return "red"
+    }
+    }
+    
 
-    // Define a function we want to run once for each feature in the features array
+function createFeatures(earthquakeData) {
+  
     // Give each feature a popup describing the place, time, and magnitude of the earthquake
     function onEachFeature(feature, layer) {
+        L.circle([feature.geometry.coordinates[0],feature.geometry.coordinates[1]], {
+            stroke:false,
+            fillOpacity: 1,
+            color: chooseColor(feature.geometry.coordinates[2]),
+            radius: feature.properties.mag
+        })
       layer.bindPopup("<h3>" + feature.properties.place +
         "</h3><hr><p>" + new Date(feature.properties.time) + "</p>" +
-        "<p><b> Magnitude: " +feature.geometry.coordinates[2] + "</b></p>" );
+        "<p><b> Magnitude: " +feature.properties.mag + "</b></p>" );
     }
   
     // Create a GeoJSON layer containing the features array on the earthquakeData object
@@ -65,9 +87,7 @@ function createFeatures(earthquakeData) {
       layers: [outsideMap, earthquakes]
     });
   
-    // Create a layer control
-    // Pass in our baseMaps and overlayMaps
-    // Add the layer control to the map
+
     L.control.layers(baseMaps, overlayMaps, {
       collapsed: false
     }).addTo(myMap);
