@@ -11,10 +11,11 @@ d3.json(data_url).then(function(data) {
 function createFeatures(earthquakeData) {
 
     // Define a function we want to run once for each feature in the features array
-    // Give each feature a popup describing the place and time of the earthquake
+    // Give each feature a popup describing the place, time, and magnitude of the earthquake
     function onEachFeature(feature, layer) {
       layer.bindPopup("<h3>" + feature.properties.place +
-        "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
+        "</h3><hr><p>" + new Date(feature.properties.time) + "</p>" +
+        "<p><b> Magnitude: " +feature.geometry.coordinates[2] + "</b></p>" );
     }
   
     // Create a GeoJSON layer containing the features array on the earthquakeData object
