@@ -22,34 +22,47 @@ d3.json(data_url).then(function(data) {
     }else if(depth>=90){
         return "red"
     }
-    }
+   };
     
 
 function createFeatures(earthquakeData) {
   
     // Give each feature a popup describing the place, time, and magnitude of the earthquake
     function onEachFeature(feature, layer) {
-        L.circle([feature.geometry.coordinates[0],feature.geometry.coordinates[1]], {
-            stroke:false,
-            fillOpacity: 1,
-            color: chooseColor(feature.geometry.coordinates[2]),
-            radius: feature.properties.mag
-        })
       layer.bindPopup("<h3>" + feature.properties.place +
         "</h3><hr><p>" + new Date(feature.properties.time) + "</p>" +
         "<p><b> Magnitude: " +feature.properties.mag + "</b></p>" );
     }
+
   
     // Create a GeoJSON layer containing the features array on the earthquakeData object
     // Run the onEachFeature function once for each piece of data in the array
     var earthquakes = L.geoJSON(earthquakeData, {
       onEachFeature: onEachFeature
     });
+    
+    var quakes = earthquakeData;
+    var quakeMarkers = [];
+    console.log(quakes)
+  
+    // Loop through the quakes array
+    for (var index = 1; index < quakes.length; index++) {
+      var quake = quakes[index];
+  
+      // For each station, create a marker and bind a popup with the station's name
+      var quakeMarker = L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
+        stroke:false,
+        fillOpacity: 1,
+        color: chooseColor(quake.geometry.coordinates[2]),
+        radius: quake.properties.mag
+    })
+      quakeMarkers.push(quakeMarker);
   
     // Sending our earthquakes layer to the createMap function
-    createMap(earthquakes);
+    createMap(L.layerGroup(earthquakes));
   }
-
+}
+  console.log(quakeMarker)
   function createMap(earthquakes) {
 
     // Define streetmap and darkmap layers
@@ -87,7 +100,6 @@ function createFeatures(earthquakeData) {
       layers: [outsideMap, earthquakes]
     });
   
-
     L.control.layers(baseMaps, overlayMaps, {
       collapsed: false
     }).addTo(myMap);
