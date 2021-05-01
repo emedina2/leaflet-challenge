@@ -28,44 +28,38 @@ var quakeMarkers = [];
 
 function createFeatures(earthquakeData) {
   
-    // Give each feature a popup describing the place, time, and magnitude of the earthquake
-    function onEachFeature(feature, layer) {
-      layer.bindPopup("<h3>" + feature.properties.place +
-        "</h3><hr><p>" + new Date(feature.properties.time) + "</p>" +
-        "<p><b> Magnitude: " +feature.properties.mag + "</b></p>" );
-    }
+  // Give each feature a popup describing the place, time, and magnitude of the earthquake
+  function onEachFeature(feature, layer) {
+    layer.bindPopup("<h3>" + feature.properties.place +
+      "</h3><hr><p>" + new Date(feature.properties.time) + "</p>" +
+      "<p><b> Magnitude: " +feature.properties.mag + "</b></p>" );
+  }
 
   
-    // Create a GeoJSON layer containing the features array on the earthquakeData object
-    // Run the onEachFeature function once for each piece of data in the array
-    var earthquakes = L.geoJSON(earthquakeData, {
-      onEachFeature: onEachFeature
-    });
+  // Create a GeoJSON layer containing the features array on the earthquakeData object
+  // Run the onEachFeature function once for each piece of data in the array
+  var earthquakes = L.geoJSON(earthquakeData, {
+    onEachFeature: onEachFeature
+  });
     
-    var quakes = earthquakeData;
-    // console.log(quakes)
+  createMap(L.layerGroup(earthquakes));
+  // Loop through the quakes array
+ for (var index = 1; index < earthquakeData.length; index++) {
+  var quake = earthquakeData[index];
+  // console.log(quake)
   
-    // Loop through the quakes array
-    for (var index = 1; index < quakes.length; index++) {
-      var quake = quakes[index];
-      // console.log(quake)
-      
-      // For each earthquake, create a circle
-      quakeMarkers.push(
-        L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
-        fillOpacity: 1,
-        fillColor: "pink",
-        // fillColor: chooseColor(quake.geometry.coordinates[2]),
-        radius: quake.properties.mag
-        })
-      )
-      
-  
-    // Sending our earthquakes layer to the createMap function
-    }
-    createMap(L.layerGroup(earthquakes));
+  // For each earthquake, create a circle
+  quakemarkers.push(
+    L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
+    fillOpacity: 1,
+    fillColor: chooseColor(quake.geometry.coordinates[2]),
+    radius: quake.properties.mag
+    })
+   );
     
-}
+  }
+};
+ 
  
 function createMap(earthquakes) {
 
