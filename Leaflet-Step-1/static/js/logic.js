@@ -52,9 +52,9 @@ function createFeatures(earthquakeData) {
     // For each earthquake, create a circle
     quakeMarkers.push(
       L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
-      fillOpacity: 1,
+      fillOpacity: .5,
       fillColor: chooseColor(quake.geometry.coordinates[2]),
-      radius: quake.properties.mag * 100
+      radius: quake.properties.mag * 10
       })
       );
       
@@ -67,6 +67,7 @@ createMap(L.layerGroup(earthquakes));
 };
 
 var quakes = L.layerGroup(quakeMarkers)
+
  
 function createMap(earthquakes) {
 
@@ -96,7 +97,7 @@ function createMap(earthquakes) {
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
       "Earthquakes": earthquakes,
-      "content": quakes      
+      "circles": quakes      
     };
   
     // Create our map, giving it the terrain map and earthquakes layers to display on load
@@ -105,6 +106,7 @@ function createMap(earthquakes) {
       zoom: 5,
       layers: [quakes]
     });
+  
   
     L.control.layers(baseMaps, overlayMaps, {
       collapsed: false
