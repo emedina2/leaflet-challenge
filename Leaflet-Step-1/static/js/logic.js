@@ -48,21 +48,22 @@ function createFeatures(earthquakeData) {
     // Loop through the quakes array
     for (var index = 1; index < quakes.length; index++) {
       var quake = quakes[index];
-  
+      console.log(quake)
       // For each station, create a marker and bind a popup with the station's name
       var quakeMarker = L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
         stroke:false,
         fillOpacity: 1,
         color: chooseColor(quake.geometry.coordinates[2]),
         radius: quake.properties.mag
-    })
+      })
       quakeMarkers.push(quakeMarker);
   
     // Sending our earthquakes layer to the createMap function
-    createMap(L.layerGroup(earthquakes));
-  }
+    }
+    createMap(L.layerGroup(quakeMarkers));
+    console.log(quakeMarkers)
 }
-  console.log(quakeMarker)
+ 
   function createMap(earthquakes) {
 
     // Define streetmap and darkmap layers
