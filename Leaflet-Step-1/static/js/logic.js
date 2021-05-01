@@ -55,20 +55,43 @@ function createFeatures(earthquakeData) {
       fillOpacity: .5,
       fillColor: chooseColor(quake.geometry.coordinates[2]),
       radius: quake.properties.mag * 10000
-      }).bindPopup("<h3>" + quake.properties.place +
+      }).bindPopup("<h3><b> Date: </b>" + quake.properties.place +
       "</h3><hr><p>" + new Date(quake.properties.time) + "</p>" +
-      "<p><b> Magnitude: " +quake.properties.mag + "</b></p>")
+      "<p><b> Magnitude: </b>" +quake.properties.mag + "</p>"+
+      "<p><b> Depth: </b>" + quake.geometry.coordinates[2] + "</p"
+      )
       );
       
   };
-console.log(quakeMarkers)
-
-  
-    
+// console.log(quakeMarkers)
+   
 createMap(L.layerGroup(quakeMarkers));
 };
 
-// var quakes = L.layerGroup(quakeMarkers)
+
+
+//create Legend
+var legend = L.control({ position: "bottomleft" });
+
+legend.onAdd = function(map) {
+  var div = L.DomUtil.create("div", "legend");
+  div.innerHTML += "<h4>Earthquake Depth</h4>";
+  div.innerHTML += '<i style="background: chartreuse"></i><span>-10 - 10</span><br>';
+  div.innerHTML += '<i style="background: greenyellow"></i><span>Forest</span><br>';
+  div.innerHTML += '<i style="background: gold"></i><span>Land</span><br>';
+  div.innerHTML += '<i style="background: goldenrod"></i><span>Residential</span><br>';
+  div.innerHTML += '<i style="background: orange"></i><span>Ice</span><br>';
+  div.innerHTML += '<i style="background: red"></i><span>> 90 m </span><br>';
+  return div;
+};
+
+
+// Create our map, giving it the terrain map and earthquakes layers to display on load
+var myMap = L.map("map", {
+  center: [40, -95],
+  zoom: 6,
+  layers: [L.layerGroup(quakeMarkers)]
+  });
 
 
 function createMap(earthquakes) {
@@ -99,17 +122,14 @@ function createMap(earthquakes) {
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
       "Earthquakes": earthquakes
-      // "circles": quakes      
+          
     };
-  
-    // Create our map, giving it the terrain map and earthquakes layers to display on load
-    var myMap = L.map("map", {
-    center: [40, -95],
-    zoom: 5,
-    layers: [earthquakes]
-    });
   
     L.control.layers(baseMaps, overlayMaps, {
       collapsed: false
     }).addTo(myMap);
   }
+
+  
+
+  legend.addTo(myMap)
