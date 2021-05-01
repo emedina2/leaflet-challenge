@@ -43,23 +43,25 @@ function createFeatures(earthquakeData) {
   });
     
   createMap(L.layerGroup(earthquakes));
-  // Loop through the quakes array
- for (var index = 1; index < earthquakeData.length; index++) {
+};
+
+// Loop through the quakes array
+for (var index = 1; index < earthquakeData.length; index++) {
   var quake = earthquakeData[index];
   // console.log(quake)
   
   // For each earthquake, create a circle
-  quakemarkers.push(
+  quakeMarkers.push(
     L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
     fillOpacity: 1,
     fillColor: chooseColor(quake.geometry.coordinates[2]),
-    radius: quake.properties.mag
+    radius: quake.properties.mag * 100
     })
-   );
+    );
     
-  }
 };
- 
+console.log(quakeMarkers)
+
  
 function createMap(earthquakes) {
 
@@ -88,7 +90,8 @@ function createMap(earthquakes) {
   
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
-      Earthquakes: earthquakes
+      Earthquakes: earthquakes,
+      "Quakes" : quakeMarkers
     };
   
     // Create our map, giving it the streetmap and earthquakes layers to display on load
