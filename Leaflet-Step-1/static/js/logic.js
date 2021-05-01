@@ -1,13 +1,16 @@
 
 //URL for GeoJSON data
 var data_url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
-
+quakedata = [];
 // Perform a GET request to the query URL
 d3.json(data_url).then(function(data) {
     createFeatures(data.features);
-});
 
-//Set Circle Colors
+});
+  
+var quakeMarkers = [];
+
+//Function Set Circle Colors
 function chooseColor(depth) {
   if (depth<10) {
       return "chartreuse"
@@ -23,9 +26,8 @@ function chooseColor(depth) {
       return "red"
   }
 };
-    
-var quakeMarkers = [];
 
+//Function to create map features
 function createFeatures(earthquakeData) {
   
   // Give each feature a popup describing the place, time, and magnitude of the earthquake
@@ -41,27 +43,31 @@ function createFeatures(earthquakeData) {
   var earthquakes = L.geoJSON(earthquakeData, {
     onEachFeature: onEachFeature
   });
-    
-  createMap(L.layerGroup(earthquakes));
-};
 
-// Loop through the quakes array
-for (var index = 1; index < earthquakeData.length; index++) {
-  var quake = earthquakeData[index];
-  // console.log(quake)
-  
-  // For each earthquake, create a circle
-  quakeMarkers.push(
-    L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
-    fillOpacity: 1,
-    fillColor: chooseColor(quake.geometry.coordinates[2]),
-    radius: quake.properties.mag * 100
-    })
-    );
+  //## Create Circles on Map
+  // Loop through the quakeData array to create circles
+  for (var index = 1; index < earthquakeData.length; index++) {
+    var quake = earthquakeData[index];
+    // console.log(quake)
     
-};
+    // For each earthquake, create a circle
+    quakeMarkers.push(
+      L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
+      fillOpacity: 1,
+      fillColor: chooseColor(quake.geometry.coordinates[2]),
+      radius: quake.properties.mag * 100
+      })
+      );
+      
+  };
 console.log(quakeMarkers)
 
+  
+    
+createMap(L.layerGroup(earthquakes));
+};
+
+var quakes = L.layerGroup(quakeMarkers)
  
 function createMap(earthquakes) {
 
@@ -90,15 +96,15 @@ function createMap(earthquakes) {
   
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
-      Earthquakes: earthquakes,
-      "Quakes" : quakeMarkers
+      "Earthquakes": earthquakes,
+      "content": quakes      
     };
   
-    // Create our map, giving it the streetmap and earthquakes layers to display on load
+    // Create our map, giving it the terrain map and earthquakes layers to display on load
     var myMap = L.map("map", {
       center: [40, -95],
       zoom: 5,
-      layers: [outsideMap, earthquakes]
+      layers: [quakes]
     });
   
     L.control.layers(baseMaps, overlayMaps, {
