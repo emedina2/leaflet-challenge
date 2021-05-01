@@ -51,10 +51,10 @@ function createFeatures(earthquakeData) {
     
     // For each earthquake, create a circle
     quakeMarkers.push(
-      L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
+      L.circle([quake.geometry.coordinates[1],quake.geometry.coordinates[0]], {
       fillOpacity: .5,
       fillColor: chooseColor(quake.geometry.coordinates[2]),
-      radius: quake.properties.mag * 10
+      radius: quake.properties.mag * 10000
       }).bindPopup("<h3>" + quake.properties.place +
       "</h3><hr><p>" + new Date(quake.properties.time) + "</p>" +
       "<p><b> Magnitude: " +quake.properties.mag + "</b></p>")
