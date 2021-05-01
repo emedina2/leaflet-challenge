@@ -14,13 +14,13 @@ var quakeMarkers = [];
 function chooseColor(depth) {
   if (depth<10) {
       return "chartreuse"
-  }else if(10<=depth<30){
+  }else if(depth<30){
       return "greenyellow"
-  }else if(30<=depth<50){
+  }else if(depth<50){
       return "gold"
-  }else if(50<=depth<70){
+  }else if(depth<70){
       return "goldenrod"
-  }else if(70<=depth<900){
+  }else if(depth<90){
       return "orange"
   }else if(depth>=90){
       return "red"
@@ -54,12 +54,11 @@ function createFeatures(earthquakeData) {
       L.circle([quake.geometry.coordinates[1],quake.geometry.coordinates[0]], {
       fillOpacity: .5,
       fillColor: chooseColor(quake.geometry.coordinates[2]),
-      radius: quake.properties.mag * 10000
+      radius: quake.properties.mag * 5000
       }).bindPopup("<h3><b> Date: </b>" + quake.properties.place +
       "</h3><hr><p>" + new Date(quake.properties.time) + "</p>" +
       "<p><b> Magnitude: </b>" +quake.properties.mag + "</p>"+
-      "<p><b> Depth: </b>" + quake.geometry.coordinates[2] + "</p"
-      )
+      "<p><b> Depth: </b>" + quake.geometry.coordinates[2] + "</p>")
       );
       
   };
@@ -77,53 +76,55 @@ legend.onAdd = function(map) {
   var div = L.DomUtil.create("div", "legend");
   div.innerHTML += "<h4>Earthquake Depth</h4>";
   div.innerHTML += '<i style="background: chartreuse"></i><span>-10 - 10</span><br>';
-  div.innerHTML += '<i style="background: greenyellow"></i><span>Forest</span><br>';
-  div.innerHTML += '<i style="background: gold"></i><span>Land</span><br>';
-  div.innerHTML += '<i style="background: goldenrod"></i><span>Residential</span><br>';
-  div.innerHTML += '<i style="background: orange"></i><span>Ice</span><br>';
-  div.innerHTML += '<i style="background: red"></i><span>> 90 m </span><br>';
+  div.innerHTML += '<i style="background: greenyellow"></i><span>10 - 30</span><br>';
+  div.innerHTML += '<i style="background: gold"></i><span>30 - 50</span><br>';
+  div.innerHTML += '<i style="background: goldenrod"></i><span>50 - 70</span><br>';
+  div.innerHTML += '<i style="background: orange"></i><span>70 - 90</span><br>';
+  div.innerHTML += '<i style="background: red"></i><span>> 90</span><br>';
   return div;
 };
 
 
-// Create our map, giving it the terrain map and earthquakes layers to display on load
-var myMap = L.map("map", {
-  center: [40, -95],
-  zoom: 6,
-  layers: [L.layerGroup(quakeMarkers)]
-  });
 
 
 function createMap(earthquakes) {
 
-    // Define streetmap and darkmap layers
-    var outsideMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-        tileSize: 512,
-        maxZoom: 18,
-        zoomOffset: -1,
-        id: "mapbox/outdoors-v11",
-        accessToken: API_KEY
-      });
-  
-    var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-      attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+  // Define streetmap and darkmap layers
+  var outsideMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+      attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+      tileSize: 512,
       maxZoom: 18,
-      id: "dark-v10",
+      zoomOffset: -1,
+      id: "mapbox/outdoors-v11",
       accessToken: API_KEY
     });
-  
-    // Define a baseMaps object to hold our base layers
-    var baseMaps = {
-      "Terrain Map": outsideMap,
-      "Dark Map": darkmap,
-    };
-  
-    // Create overlay object to hold our overlay layer
-    var overlayMaps = {
-      "Earthquakes": earthquakes
-          
-    };
+
+  var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    maxZoom: 18,
+    id: "dark-v10",
+    accessToken: API_KEY
+  });
+
+  // Define a baseMaps object to hold our base layers
+  var baseMaps = {
+    "Terrain Map": outsideMap,
+    "Dark Map": darkmap,
+  };
+
+  // Create overlay object to hold our overlay layer
+  var overlayMaps = {
+    "Earthquakes": earthquakes
+        
+  };
+
+    // Create our map, giving it the terrain map and earthquakes layers to display on load
+  var myMap = L.map("map", {
+    center: [40, -110],
+    zoom: 6,
+    layers: [outsideMap, earthquakes]
+    });
+  legend.addTo(myMap)
   
     L.control.layers(baseMaps, overlayMaps, {
       collapsed: false
@@ -132,4 +133,4 @@ function createMap(earthquakes) {
 
   
 
-  legend.addTo(myMap)
+  
