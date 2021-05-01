@@ -5,25 +5,26 @@ var data_url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_we
 // Perform a GET request to the query URL
 d3.json(data_url).then(function(data) {
     createFeatures(data.features);
-  });
+});
 
 //Set Circle Colors
-  function chooseColor(depth) {
-    if (depth<10) {
-        return "chartreuse"
-    }else if(10<=depth<30){
-        return "greenyellow"
-    }else if(30<=depth<50){
-        return "gold"
-    }else if(50<=depth<70){
-        return "goldenrod"
-    }else if(70<=depth<900){
-        return "orange"
-    }else if(depth>=90){
-        return "red"
-    }
-   };
+function chooseColor(depth) {
+  if (depth<10) {
+      return "chartreuse"
+  }else if(10<=depth<30){
+      return "greenyellow"
+  }else if(30<=depth<50){
+      return "gold"
+  }else if(50<=depth<70){
+      return "goldenrod"
+  }else if(70<=depth<900){
+      return "orange"
+  }else if(depth>=90){
+      return "red"
+  }
+};
     
+var quakeMarkers = [];
 
 function createFeatures(earthquakeData) {
   
@@ -42,29 +43,31 @@ function createFeatures(earthquakeData) {
     });
     
     var quakes = earthquakeData;
-    var quakeMarkers = [];
-    console.log(quakes)
+    // console.log(quakes)
   
     // Loop through the quakes array
     for (var index = 1; index < quakes.length; index++) {
       var quake = quakes[index];
-      console.log(quake)
-      // For each station, create a marker and bind a popup with the station's name
-      var quakeMarker = L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
-        stroke:false,
+      // console.log(quake)
+      
+      // For each earthquake, create a circle
+      quakeMarkers.push(
+        L.circle([quake.geometry.coordinates[0],quake.geometry.coordinates[1]], {
         fillOpacity: 1,
-        color: chooseColor(quake.geometry.coordinates[2]),
+        fillColor: "pink",
+        // fillColor: chooseColor(quake.geometry.coordinates[2]),
         radius: quake.properties.mag
-      })
-      quakeMarkers.push(quakeMarker);
+        })
+      )
+      
   
     // Sending our earthquakes layer to the createMap function
     }
-    createMap(L.layerGroup(quakeMarkers));
-    console.log(quakeMarkers)
+    createMap(L.layerGroup(earthquakes));
+    
 }
  
-  function createMap(earthquakes) {
+function createMap(earthquakes) {
 
     // Define streetmap and darkmap layers
     var outsideMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
