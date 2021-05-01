@@ -1,7 +1,7 @@
 
 //URL for GeoJSON data
 var data_url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
-quakedata = [];
+
 // Perform a GET request to the query URL
 d3.json(data_url).then(function(data) {
     createFeatures(data.features);
@@ -27,16 +27,15 @@ function chooseColor(depth) {
   }
 };
 
+// Give each feature a popup describing the place, time, and magnitude of the earthquake
+function onEachFeature(feature, layer) {
+  layer.bindPopup("<h3>" + feature.properties.place +
+  "</h3><hr><p>" + new Date(feature.properties.time) + "</p>" +
+  "<p><b> Magnitude: " +feature.properties.mag + "</b></p>" );
+}
+
 //Function to create map features
 function createFeatures(earthquakeData) {
-  
-  // Give each feature a popup describing the place, time, and magnitude of the earthquake
-  function onEachFeature(feature, layer) {
-    layer.bindPopup("<h3>" + feature.properties.place +
-      "</h3><hr><p>" + new Date(feature.properties.time) + "</p>" +
-      "<p><b> Magnitude: " +feature.properties.mag + "</b></p>" );
-  }
-
   
   // Create a GeoJSON layer containing the features array on the earthquakeData object
   // Run the onEachFeature function once for each piece of data in the array
